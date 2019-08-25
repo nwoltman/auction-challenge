@@ -7,7 +7,7 @@ use serde::ser::{SerializeSeq, Serializer};
 use std::fmt;
 use std::io::{self, BufReader, BufWriter};
 
-const CONFIG_PATH: &str = "config.json";
+const CONFIG_PATH: &str = "/auction/config.json";
 
 struct AuctionProcessor<'s, S: SerializeSeq> {
     config: auction_config::Config,
