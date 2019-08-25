@@ -1,6 +1,6 @@
 use crate::auction_config::{Config, SiteConfig};
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer};
 
 use std::collections::BTreeMap;
 
@@ -8,6 +8,7 @@ use std::collections::BTreeMap;
 pub struct Bid {
     pub bidder: String,
     pub unit: String,
+    #[serde(serialize_with = "serialize_float")]
     pub bid: f64,
 }
 
@@ -72,6 +73,18 @@ pub fn get_winning_bids<'a>(auction: &'a Auction, config: &Config) -> Vec<&'a Bi
         .values()
         .map(|winning_bid| winning_bid.bid)
         .collect()
+}
+
+// Fix for serializing f64 values with no fractional part
+fn serialize_float<S>(f: &f64, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    if f.fract() == 0.0 {
+        serializer.serialize_i64(*f as i64)
+    } else {
+        serializer.serialize_f64(*f)
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

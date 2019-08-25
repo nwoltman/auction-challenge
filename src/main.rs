@@ -2,7 +2,7 @@ mod auction;
 mod auction_config;
 
 use serde::de::{self, Deserializer, SeqAccess, Visitor};
-use serde::ser::{SerializeSeq, Serializer};
+use serde::ser::{Serializer, SerializeSeq};
 
 use std::fmt;
 use std::io::{self, BufReader, BufWriter};
