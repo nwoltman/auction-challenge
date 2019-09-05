@@ -50,7 +50,7 @@ fn main() -> serde_json::Result<()> {
     let mut serializer = serde_json::Serializer::new(writer);
     let mut seq_serializer = serializer.serialize_seq(None)?;
 
-    for auction in receiver.iter() {
+    for auction in receiver {
         let winning_bids = auction::get_winning_bids(&auction, &config);
         seq_serializer.serialize_element(&winning_bids)?;
     }

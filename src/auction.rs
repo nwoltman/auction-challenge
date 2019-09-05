@@ -38,7 +38,7 @@ pub fn get_winning_bids<'a>(auction: &'a Auction, config: &Config) -> Vec<&'a Bi
 
     let mut unit_winning_bids: BTreeMap<&String, WinningBid> = BTreeMap::new();
 
-    for bid in auction.bids.iter() {
+    for bid in &auction.bids {
         if !is_valid_bid(&bid, &auction, &site_config) {
             continue;
         }

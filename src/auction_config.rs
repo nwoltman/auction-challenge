@@ -50,11 +50,11 @@ pub fn get_config<P: AsRef<Path>>(path: P) -> Config {
 
     let mut sites = HashMap::new();
 
-    for site in json_config.sites.iter() {
+    for site in &json_config.sites {
         sites.insert(
-            site.name.to_owned(),
+            site.name.clone(),
             SiteConfig {
-                bidders: HashSet::from_iter(site.bidders.to_owned()),
+                bidders: HashSet::from_iter(site.bidders.clone()),
                 floor: site.floor,
             },
         );
@@ -62,8 +62,8 @@ pub fn get_config<P: AsRef<Path>>(path: P) -> Config {
 
     let mut bidder_adjustments = HashMap::new();
 
-    for bidder in json_config.bidders.iter() {
-        bidder_adjustments.insert(bidder.name.to_owned(), bidder.adjustment);
+    for bidder in &json_config.bidders {
+        bidder_adjustments.insert(bidder.name.clone(), bidder.adjustment);
     }
 
     Config {
