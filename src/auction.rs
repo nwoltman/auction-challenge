@@ -32,7 +32,7 @@ fn is_valid_bid(bid: &Bid, auction: &Auction, site_config: &SiteConfig) -> bool 
 pub fn get_winning_bids<'a>(auction: &'a Auction, config: &Config) -> Vec<&'a Bid> {
     let site_config = match config.sites.get(&auction.site) {
         Some(site_config) => site_config,
-        None => return Vec::new(), // The site is unrecognized
+        None => return vec![], // The site is unrecognized
     };
     let site_floor = site_config.floor;
 
@@ -47,7 +47,7 @@ pub fn get_winning_bids<'a>(auction: &'a Auction, config: &Config) -> Vec<&'a Bi
             Some(adjustment) => adjustment,
             None => continue, // Bidder is unknown
         };
-        let adjusted_bid_value = bid.bid + bidder_adjustment;
+        let adjusted_bid_value = bid.bid + bid.bid * bidder_adjustment;
 
         if adjusted_bid_value < site_floor {
             continue; // Bid is invalid since it's below the site's floor
@@ -174,9 +174,10 @@ mod tests {
             }"#,
         );
 
-        let expected: Vec<&Bid> = vec![];
-
-        assert_eq!(get_winning_bids(&auction, &get_test_config()), expected);
+        assert_eq!(
+            get_winning_bids(&auction, &get_test_config()),
+            vec![] as Vec<&Bid>
+        );
     }
 
     #[test]
@@ -205,9 +206,10 @@ mod tests {
             }"#,
         );
 
-        let expected: Vec<&Bid> = vec![];
-
-        assert_eq!(get_winning_bids(&auction, &get_test_config()), expected);
+        assert_eq!(
+            get_winning_bids(&auction, &get_test_config()),
+            vec![] as Vec<&Bid>
+        );
     }
 
     #[test]
@@ -359,22 +361,12 @@ mod tests {
         let auction = auction_from_json(
             r#"{
               "site": "houseofcheese.com",
-              "units": ["banner", "sidebar"],
+              "units": ["banner"],
               "bids": [
                 {
                   "bidder": "AUCT",
                   "unit": "banner",
                   "bid": 32
-                },
-                {
-                  "bidder": "BIDD",
-                  "unit": "sidebar",
-                  "bid": 60
-                },
-                {
-                  "bidder": "AUCT",
-                  "unit": "sidebar",
-                  "bid": 55
                 }
               ]
             }"#,
@@ -382,11 +374,7 @@ mod tests {
 
         assert_eq!(
             get_winning_bids(&auction, &get_test_config()),
-            vec![&Bid {
-                bidder: "BIDD".to_string(),
-                unit: "sidebar".to_string(),
-                bid: 60.0,
-            },]
+            vec![] as Vec<&Bid>
         );
     }
 
@@ -405,7 +393,7 @@ mod tests {
                 {
                   "bidder": "AUCT",
                   "unit": "sidebar",
-                  "bid": 61
+                  "bid": 64.1
                 }
               ]
             }"#,
@@ -416,7 +404,7 @@ mod tests {
             vec![&Bid {
                 bidder: "AUCT".to_string(),
                 unit: "sidebar".to_string(),
-                bid: 61.0,
+                bid: 64.1,
             },]
         );
     }
@@ -431,7 +419,7 @@ mod tests {
                 {
                   "bidder": "AUCT",
                   "unit": "sidebar",
-                  "bid": 60.0625
+                  "bid": 64
                 },
                 {
                   "bidder": "BIDD",
@@ -447,7 +435,7 @@ mod tests {
             vec![&Bid {
                 bidder: "AUCT".to_string(),
                 unit: "sidebar".to_string(),
-                bid: 60.0625,
+                bid: 64.0,
             },]
         );
     }
@@ -529,8 +517,9 @@ mod tests {
             }"#,
         );
 
-        let expected: Vec<&Bid> = vec![];
-
-        assert_eq!(get_winning_bids(&auction, &get_test_config()), expected);
+        assert_eq!(
+            get_winning_bids(&auction, &get_test_config()),
+            vec![] as Vec<&Bid>
+        );
     }
 }
